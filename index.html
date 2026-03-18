@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Big Data: LGPD & Recomendação</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2 { margin-top: 0; color: #2c3e50; font-size: 1.2rem; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.9rem;}
+        input, select {
+            width: 100%; padding: 10px; margin-top: 5px;
+            border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;
+        }
+        button {
+            margin-top: 20px; width: 100%; padding: 12px;
+            background-color: #3498db; color: white; border: none;
+            border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background-color: #2980b9; }
+        pre {
+            background-color: #2c3e50; color: #ecf0f1; padding: 15px;
+            border-radius: 5px; overflow-x: auto; font-size: 0.9rem;
+        }
+        .status { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; }
+        .red { background-color: #ffcccc; color: #cc0000; }
+        .green { background-color: #ccffcc; color: #006600; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+        <div class="card">
+            <h2>🔴 1. Fonte de Dados (Site/App)</h2>
+            <p style="font-size: 0.9rem; color: #666;">Simula o evento de clique ou compra do usuário.</p>
+            
+            <label for="nome">Nome do Cliente:</label>
+            <input type="text" id="nome" value="Carlos Silva" placeholder="Ex: Maria Souza">
+
+            <label for="cpf">CPF (Dado Sensível):</label>
+            <input type="text" id="cpf" value="111.222.333-44" placeholder="Ex: 000.000.000-00">
+
+            <label for="produto">Produto Interagido:</label>
+            <select id="produto">
+                <option value="Smartphone X">Smartphone X</option>
+                <option value="Notebook Pro">Notebook Pro</option>
+                <option value="Fone Bluetooth">Fone Bluetooth</option>
+            </select>
+
+            <button onclick="processarPipeline()">Executar Pipeline Spark 🚀</button>
+        </div>
+
+        <div class="card">
+            <h2>🟢 2. Data Lake (Visão da IA)</h2>
+            <p style="font-size: 0.9rem; color: #666;">Como o dado chega no banco após a tokenização.</p>
+            
+            <div id="saidaDataLake">
+                <pre>// Aguardando ingestão de dados...</pre>
+            </div>
+
+            <h2 style="margin-top: 30px;">🤖 3. Modelo de Recomendação</h2>
+            <p style="font-size: 0.9rem; color: #666;">Sugestão gerada por Filtragem Colaborativa.</p>
+            
+            <div id="saidaRecomendacao">
+                <pre>// Aguardando processamento...</pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simula a função UDF do PySpark usando uma versão simplificada em JavaScript
+        function simularHashSeguro(texto) {
+            // Em produção, usaríamos SHA-256. Aqui usamos Base64 embaralhado para simulação visual.
+            return "TKN-" + btoa(texto).substring(0, 10).toUpperCase() + Math.floor(Math.random() * 99);
+        }
+
+        function processarPipeline() {
+            // 1. Coleta os dados brutos do formulário
+            const nome = document.getElementById('nome').value;
+            const cpf = document.getElementById('cpf').value;
+            const produto = document.getElementById('produto').value;
+
+            if(!cpf || !nome) {
+                alert("Preencha o nome e o CPF para testar o simulador.");
+                return;
+            }
+
+            // 2. Transforma (Tokenização LGPD)
+            const tokenAnonimo = simularHashSeguro(cpf);
+            
+            const dadoSeguro = {
+                "id_cliente_anonimo": tokenAnonimo,
+                "produto_interagido": produto,
+                "timestamp": new Date().toISOString()
+            };
+
+            // Exibe no Data Lake (JSON limpo)
+            document.getElementById('saidaDataLake').innerHTML = `
+                <span class="status green">Dado Seguro (LGPD OK)</span>
+                <pre>${JSON.stringify(dadoSeguro, null, 2)}</pre>
+            `;
+
+            // 3. Simula a lógica de recomendação (ALS) baseada no produto
+            let recomendacao = "";
+            if(produto === "Smartphone X") recomendacao = "Capinha Anti-Impacto e Película de Vidro";
+            if(produto === "Notebook Pro") recomendacao = "Mouse Sem Fio e Mochila para Notebook";
+            if(produto === "Fone Bluetooth") recomendacao = "Case de Proteção para Fone";
+
+            // Exibe a recomendação gerada
+            setTimeout(() => {
+                document.getElementById('saidaRecomendacao').innerHTML = `
+                    <span class="status green">Sucesso</span>
+                    <pre>Usuário [${tokenAnonimo}] também se interessou por:\n-> ${recomendacao}</pre>
+                `;
+            }, 800); // Pequeno atraso para simular o tempo de processamento
+        }
+    </script>
+</body>
+</html>
