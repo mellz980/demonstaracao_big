@@ -3,137 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Big Data: LGPD & Recomendação</title>
+    <title>MegaTech Varejo | Simulador de Recomendação & LGPD</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
+        :root {
+            --primary: #2563eb;
+            --secondary: #f59e0b;
+            --bg: #f3f4f6;
+            --text: #1f2937;
+            --console-bg: #1e293b;
         }
-        .dashboard {
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header e Simulação de Login */
+        header {
+            background-color: white;
+            padding: 15px 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .user-simulation {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: #eff6ff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #bfdbfe;
+        }
+
+        .user-simulation input {
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        /* Vitrine de Produtos */
+        main {
+            padding: 40px;
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        button:hover { background-color: #1d4ed8; }
+
+        /* Área de Recomendação do Cliente */
+        #front-recommendation {
+            margin-top: 40px;
+            display: none;
+            background: linear-gradient(to right, #fffbeb, #fef3c7);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        /* Console do Desenvolvedor (Back-end) */
+        .dev-panel {
+            background-color: var(--console-bg);
+            color: #e2e8f0;
+            padding: 30px 40px;
+            border-top: 4px solid #475569;
+        }
+
+        .dev-panel h3 {
+            margin-top: 0;
+            color: #38bdf8;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .console-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            max-width: 1000px;
-            width: 100%;
         }
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h2 { margin-top: 0; color: #2c3e50; font-size: 1.2rem; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.9rem;}
-        input, select {
-            width: 100%; padding: 10px; margin-top: 5px;
-            border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;
-        }
-        button {
-            margin-top: 20px; width: 100%; padding: 12px;
-            background-color: #3498db; color: white; border: none;
-            border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-        button:hover { background-color: #2980b9; }
+
         pre {
-            background-color: #2c3e50; color: #ecf0f1; padding: 15px;
-            border-radius: 5px; overflow-x: auto; font-size: 0.9rem;
+            background-color: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #a7f3d0;
+            margin: 0;
         }
-        .status { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; }
-        .red { background-color: #ffcccc; color: #cc0000; }
-        .green { background-color: #ccffcc; color: #006600; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background-color: #059669;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
-    <div class="dashboard">
-        <div class="card">
-            <h2>🔴 1. Fonte de Dados (Site/App)</h2>
-            <p style="font-size: 0.9rem; color: #666;">Simula o evento de clique ou compra do usuário.</p>
-            
-            <label for="nome">Nome do Cliente:</label>
-            <input type="text" id="nome" value="Carlos Silva" placeholder="Ex: Maria Souza">
-
-            <label for="cpf">CPF (Dado Sensível):</label>
-            <input type="text" id="cpf" value="111.222.333-44" placeholder="Ex: 000.000.000-00">
-
-            <label for="produto">Produto Interagido:</label>
-            <select id="produto">
-                <option value="Smartphone X">Smartphone X</option>
-                <option value="Notebook Pro">Notebook Pro</option>
-                <option value="Fone Bluetooth">Fone Bluetooth</option>
-            </select>
-
-            <button onclick="processarPipeline()">Executar Pipeline Spark 🚀</button>
+    <header>
+        <div class="logo">🛒 MegaTech Varejo</div>
+        <div class="user-simulation">
+            <span style="font-size: 0.85rem; color: #666;"><strong>Simulador de Usuário:</strong></span>
+            <input type="text" id="nome" value="Carlos Silva" placeholder="Nome Completo">
+            <input type="text" id="cpf" value="111.222.333-44" placeholder="CPF">
         </div>
+    </header>
 
-        <div class="card">
-            <h2>🟢 2. Data Lake (Visão da IA)</h2>
-            <p style="font-size: 0.9rem; color: #666;">Como o dado chega no banco após a tokenização.</p>
-            
-            <div id="saidaDataLake">
-                <pre>// Aguardando ingestão de dados...</pre>
+    <main>
+        <h2 class="section-title">Ofertas do Dia</h2>
+        
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="product-icon">📱</div>
+                <h3>Smartphone X</h3>
+                <p class="product-price">R$ 3.499,00</p>
+                <button onclick="registrarInteracao('Smartphone X')">Adicionar ao Carrinho</button>
             </div>
 
-            <h2 style="margin-top: 30px;">🤖 3. Modelo de Recomendação</h2>
-            <p style="font-size: 0.9rem; color: #666;">Sugestão gerada por Filtragem Colaborativa.</p>
+            <div class="product-card">
+                <div class="product-icon">💻</div>
+                <h3>Notebook Pro</h3>
+                <p class="product-price">R$ 5.899,00</p>
+                <button onclick="registrarInteracao('Notebook Pro')">Adicionar ao Carrinho</button>
+            </div>
+
+            <div class="product-card">
+                <div class="product-icon">🎧</div>
+                <h3>Fone Bluetooth</h3>
+                <p class="product-price">R$ 299,00</p>
+                <button onclick="registrarInteracao('Fone Bluetooth')">Adicionar ao Carrinho</button>
+            </div>
+        </div>
+
+        <div id="front-recommendation">
+            <h2 class="section-title" style="margin-top: 0; font-size: 1.3rem;">🔥 Pessoas como você também compraram:</h2>
+            <div id="recomendacao-texto" style="font-size: 1.1rem; color: #b45309; font-weight: 500;">
+                </div>
+        </div>
+    </main>
+
+    <div class="dev-panel">
+        <h3>👨‍💻 Console Big Data (Bastidores)</h3>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 20px;">
+            Acompanhe o pipeline de dados: Anonimização de PII (LGPD) e resposta da API do Modelo de Recomendação.
+        </p>
+
+        <div class="console-grid">
+            <div>
+                <span class="status-badge">1. Ingestão no Data Lake (Anonimizado)</span>
+                <div id="saidaDataLake">
+                    <pre>// Aguardando interação do usuário no site...</pre>
+                </div>
+            </div>
             
-            <div id="saidaRecomendacao">
-                <pre>// Aguardando processamento...</pre>
+            <div>
+                <span class="status-badge" style="background-color: #3b82f6;">2. Retorno do Modelo de ML</span>
+                <div id="saidaRecomendacao">
+                    <pre>// Aguardando processamento da IA...</pre>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Simula a função UDF do PySpark usando uma versão simplificada em JavaScript
+        // Função para gerar o Hash (Simula o mascaramento do CPF para LGPD)
         function simularHashSeguro(texto) {
-            // Em produção, usaríamos SHA-256. Aqui usamos Base64 embaralhado para simulação visual.
-            return "TKN-" + btoa(texto).substring(0, 10).toUpperCase() + Math.floor(Math.random() * 99);
+            return "USR-TKN-" + btoa(texto).substring(0, 8).toUpperCase() + Math.floor(Math.random() * 999);
         }
 
-        function processarPipeline() {
-            // 1. Coleta os dados brutos do formulário
+        // Função principal disparada pelo clique na loja
+        function registrarInteracao(produto) {
             const nome = document.getElementById('nome').value;
             const cpf = document.getElementById('cpf').value;
-            const produto = document.getElementById('produto').value;
 
             if(!cpf || !nome) {
-                alert("Preencha o nome e o CPF para testar o simulador.");
+                alert("Por favor, preencha os dados de simulação de usuário no topo da página.");
                 return;
             }
 
-            // 2. Transforma (Tokenização LGPD)
+            // --- 1. PIPELINE DE DADOS (Tokenização LGPD) ---
             const tokenAnonimo = simularHashSeguro(cpf);
             
             const dadoSeguro = {
                 "id_cliente_anonimo": tokenAnonimo,
-                "produto_interagido": produto,
+                "evento": "add_to_cart",
+                "produto_id": produto,
                 "timestamp": new Date().toISOString()
             };
 
-            // Exibe no Data Lake (JSON limpo)
+            // Exibe log no Data Lake (Console de baixo)
             document.getElementById('saidaDataLake').innerHTML = `
-                <span class="status green">Dado Seguro (LGPD OK)</span>
                 <pre>${JSON.stringify(dadoSeguro, null, 2)}</pre>
             `;
 
-            // 3. Simula a lógica de recomendação (ALS) baseada no produto
+            // --- 2. MODELO DE RECOMENDAÇÃO (Regras de Associação simples) ---
             let recomendacao = "";
-            if(produto === "Smartphone X") recomendacao = "Capinha Anti-Impacto e Película de Vidro";
-            if(produto === "Notebook Pro") recomendacao = "Mouse Sem Fio e Mochila para Notebook";
-            if(produto === "Fone Bluetooth") recomendacao = "Case de Proteção para Fone";
+            let iconeRecomendacao = "";
 
-            // Exibe a recomendação gerada
+            if(produto === "Smartphone X") {
+                recomendacao = "Capinha Anti-Impacto e Película de Vidro";
+                iconeRecomendacao = "🛡️";
+            }
+            if(produto === "Notebook Pro") {
+                recomendacao = "Mouse Sem Fio e Mochila Premium";
+                iconeRecomendacao = "🖱️";
+            }
+            if(produto === "Fone Bluetooth") {
+                recomendacao = "Case de Proteção para Fones";
+                iconeRecomendacao = "🧳";
+            }
+
+            // --- 3. ATUALIZA A INTERFACE (Simulando latência de rede/processamento) ---
+            document.getElementById('saidaRecomendacao').innerHTML = `<pre>// Processando matriz de recomendação...</pre>`;
+            document.getElementById('front-recommendation').style.display = 'none';
+
             setTimeout(() => {
+                // Atualiza o Log do desenvolvedor
                 document.getElementById('saidaRecomendacao').innerHTML = `
-                    <span class="status green">Sucesso</span>
-                    <pre>Usuário [${tokenAnonimo}] também se interessou por:\n-> ${recomendacao}</pre>
+                    <pre>{\n  "status": 200,\n  "target_user": "${tokenAnonimo}",\n  "recommended_items": [\n    "${recomendacao}"\n  ]\n}</pre>
                 `;
-            }, 800); // Pequeno atraso para simular o tempo de processamento
+
+                // Atualiza a vitrine da loja para o cliente
+                document.getElementById('recomendacao-texto').innerHTML = `${iconeRecomendacao} ${recomendacao} <br><button style="margin-top: 15px; width: auto; background-color: var(--secondary); color: #000;">Adicionar Recomendação ao Carrinho</button>`;
+                document.getElementById('front-recommendation').style.display = 'block';
+                
+            }, 800); // 800ms de delay artificial para dar efeito de processamento
         }
     </script>
 </body>
